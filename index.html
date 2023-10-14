@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Web Browser</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: Arial, sans-serif;
+		}
+		#header {
+			background-color: #333;
+			color: #fff;
+			padding: 10px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		#search {
+			width: 400px;
+			height: 30px;
+			padding: 5px;
+			border: none;
+			border-radius: 5px;
+			font-size: 16px;
+		}
+		#tabs {
+			display: flex;
+			background-color: #f7f7f7;
+			padding: 5px;
+			overflow-x: auto;
+			white-space: nowrap;
+		}
+		.tab {
+			padding: 5px 10px;
+			border: none;
+			background-color: #ddd;
+			cursor: pointer;
+			margin-right: 5px;
+			border-radius: 5px 5px 0 0;
+		}
+		.tab.active {
+			background-color: #fff;
+		}
+		#content {
+			height: calc(100vh - 100px);
+			padding: 10px;
+			background-color: #fff;
+			overflow-y: auto;
+		}
+		iframe {
+			width: 100%;
+			height: 100%;
+			border: none;
+		}
+	</style>
+</head>
+<body>
+	<div id="header">
+		<div>
+			<button id="back">Back</button>
+			<button id="forward">Forward</button>
+			<button id="refresh">Refresh</button>
+		</div>
+		<div>
+			<input type="text" id="search" placeholder="Search...">
+			<button id="go">Go</button>
+		</div>
+	</div>
+	<div id="tabs"></div>
+	<div id="content"></div>
+	<script>
+		let tabs = document.getElementById("tabs");
+		let content = document.getElementById("content");
+		let search = document.getElementById("search");
+		let go = document.getElementById("go");
+		let back = document.getElementById("back");
+		let forward = document.getElementById("forward");
+		let refresh = document.getElementById("refresh");
+		let activeTab = null;
+
+		function createTab(url) {
+			let tab = document.createElement("button");
+			tab.classList.add("tab");
+			tab.textContent = url;
+			tab.addEventListener("click", function() {
+				if (activeTab) {
+					activeTab.classList.remove("active");
+				}
+				tab.classList.add("active");
+				activeTab = tab;
+				content.innerHTML = `<iframe src="${url}"></iframe>`;
+			});
+			tabs.appendChild(tab);
+			tab.click();
+		}
+
+		go.addEventListener("click", function() {
+			let url = search.value;
+			createTab(url);
+		});
+
+		search.addEventListener("keydown", function(event) {
+			if (event.code === "Enter") {
+				let url = search.value;
+				createTab(url);
+			}
+		});
+
+		back.addEventListener("click", function() {
+			content.querySelector("iframe").contentWindow.history.back();
+		});
+
+		forward.addEventListener("click", function() {
+			content.querySelector("iframe").contentWindow.history.forward();
+		});
+
+		refresh.addEventListener("click", function() {
+			content.querySelector("iframe").contentWindow.location.reload();
+		});
+	</script>
+</body>
+</html>
